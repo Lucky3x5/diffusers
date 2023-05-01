@@ -912,8 +912,16 @@ class LoraLoaderMixin:
 
             layer_keys = [key.split(".", 1)[0] + v for v in [".lora_up.weight", ".lora_down.weight", ".alpha"]]
 
-            weight_up = state_dict[layer_keys[0]].to(dtype)
-            weight_down = state_dict[layer_keys[1]].to(dtype)
+            weight_up = state_dict[layer_keys[0]]
+            weight_down = state_dict[layer_keys[1]]
+            if weight_up.device != torch.device("cpu"):
+                # Cast to UNet / Text encoder type
+                weight_up = weight_up.to(dtype)
+                weight_down = weight_down.to(dtype)
+            elif dtype != torch.float32:
+                # Cast to float32 (Fix for RuntimeError: "addmm_impl_cpu_" not implemented for 'Half')
+                weight_up = weight_up.to(torch.float32)
+                weight_down = weight_down.to(torch.float32)
             alpha = state_dict[layer_keys[2]]
             alpha = alpha.item() / weight_up.shape[1] if alpha else 1.0
 
