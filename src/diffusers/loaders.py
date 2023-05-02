@@ -915,7 +915,7 @@ class LoraLoaderMixin:
             weight_up = state_dict[layer_keys[0]]
             weight_down = state_dict[layer_keys[1]]
             print(f"Before - Model dtype {dtype} - weight_up dtype {weight_up.dtype} - weight_up device {weight_up.device}")
-            if weight_up.device != torch.device("cpu"):
+            if weight_up.get_device() != -1: #device != torch.device("cpu"):
                 # Cast to UNet / Text encoder type
                 print("No cast")
                 weight_up = weight_up.to(dtype)
