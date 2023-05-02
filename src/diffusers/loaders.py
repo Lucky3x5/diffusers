@@ -918,7 +918,7 @@ class LoraLoaderMixin:
                 # Cast to UNet / Text encoder type
                 weight_up = weight_up.to(dtype)
                 weight_down = weight_down.to(dtype)
-            elif dtype != torch.float32:
+            elif weight_up.dtype != torch.float32:
                 # Cast to float32 (Fix for RuntimeError: "addmm_impl_cpu_" not implemented for 'Half')
                 weight_up = weight_up.to(torch.float32)
                 weight_down = weight_down.to(torch.float32)
